@@ -27,7 +27,7 @@ var Word = function (string) {
 
     //Add Letter objects to Word
     var arr = string.split("");
-    console.log(arr);
+    // console.log(arr);
     for (var i = 0; i < arr.length; i++) {
         // console.log(string[i]);
         var newLetter = new Letter(arr[i]);
