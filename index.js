@@ -6,6 +6,7 @@ var fs = require("fs");
 //Reads the wordlist file and turns it into an array
 
 var wordList = [];
+var guessedLetters;
 var guessWord;
 var guessesLeft;
 fs.readFile('./wordList.txt', "utf8", function (err, data) {
@@ -21,13 +22,14 @@ fs.readFile('./wordList.txt', "utf8", function (err, data) {
     //         console.log(wordList[i]);
     //     }
     // }
-    
+
     newWord();
 });
 
 function newWord() {
     guessesLeft = 8;
-
+    guessedLetters = [];
+    
     var rand = Math.floor(Math.random() * wordList.length);
     guessWord = new Word(wordList[rand]);
     console.log("New Word\n")
@@ -48,16 +50,22 @@ function letterPrompt() {
             // console.log(`letter: ${ascii}`);
             ascii = ascii.charCodeAt(0);
             if (ascii >= 97 && ascii < 123) {
-                var right = guessWord.letterGuess(response.letter[0]);
-                if (right) {
-                    console.log(`Correct!\n`);
-                } else {
-                    guessesLeft--;
-                    if (guessesLeft > 0) {
-                        console.log(`Wrong! Try again.\nGuesses left ${guessesLeft}`);
+                if (guessedLetters.indexOf(response.letter[0]) < 0) {
+                    var right = guessWord.letterGuess(response.letter[0]);
+                    if (right) {
+                        console.log(`Correct!\n`);
                     } else {
-                        console.log(`Wrong! You're out of guesses!`);
+                        guessesLeft--;
+                        if (guessesLeft > 0) {
+                            console.log(`Wrong! Try again.\nGuesses left ${guessesLeft}`);
+                        } else {
+                            console.log(`Wrong! You're out of guesses!`);
+                        }
                     }
+                    guessedLetters.push(response.letter[0]);
+                    console.log(guessedLetters);
+                } else {
+                    console.log(`Already guessed '${response.letter[0]}'`);
                 }
             } else {
                 console.log("Input a letter, 'a' through 'z'.");
@@ -68,7 +76,7 @@ function letterPrompt() {
             console.log("Too many letters! Just input 1 letter");
         }
         var displayWord = guessWord.toString();
-        if(guessesLeft <= 0) {
+        if (guessesLeft <= 0) {
             console.log(`You Lose!\n`);
             newWord();
         } else if (displayWord.indexOf("_") < 0) {
